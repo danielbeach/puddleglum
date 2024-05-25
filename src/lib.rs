@@ -4,6 +4,8 @@ use aws_sdk_s3::config::Credentials;
 use std::env;
 use std::future::IntoFuture;
 use aws_sdk_s3::primitives::DateTime;
+use aws_sdk_s3::primitives::DateTime as AwsDateTime;
+use chrono::{DateTime as ChronoDateTime, NaiveDateTime, Utc};
 
 pub struct S3 {
     pub bucket: String,
@@ -110,5 +112,42 @@ impl S3 {
         } else {
             return false;
         }
+    }
+
+    fn convert_aws_to_chrono(&self, aws_dt: AwsDateTime) -> ChronoDateTime<Utc> {
+        let seconds = aws_dt.secs();
+        let nanos = aws_dt.subsec_nanos();
+        let naive_datetime = NaiveDateTime::from_timestamp(seconds, nanos);
+        ChronoDateTime::from_utc(naive_datetime, Utc)
+    }
+
+    pub async fn how_many_files_last_24_hours(&self) -> i64 {
+        let objects = self.list_objects();
+        let mut count = 0;
+        for object in objects.await {
+            let now = chrono::Utc::now();
+            let last_modified = object.last_modified.unwrap();
+            let chrono_datetime = self.convert_aws_to_chrono(last_modified);
+            let duration = now.signed_duration_since(chrono_datetime);
+            if duration.num_hours() < 24 {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    pub async fn how_many_files_last_48_hours(&self) -> i64 {
+        let objects = self.list_objects();
+        let mut count = 0;
+        for object in objects.await {
+            let now = chrono::Utc::now();
+            let last_modified = object.last_modified.unwrap();
+            let chrono_datetime = self.convert_aws_to_chrono(last_modified);
+            let duration = now.signed_duration_since(chrono_datetime);
+            if duration.num_hours() < 48 {
+                count += 1;
+            }
+        }
+        return count;
     }
 }
