@@ -1,6 +1,7 @@
 ## PuddleGlum
 
-### WIP - Still Under Construction ####
+<img src="https://github.com/danielbeach/puddleglum/blob/main/imgs/puddleglum.webp" width="450">
+
 
 This is a Rust-based Python package that allows for complex Data Quality 
 checks on AWS `s3` buckets. 
