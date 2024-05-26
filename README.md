@@ -10,9 +10,17 @@ checks on AWS `s3` buckets.
 - when was the last time a file was received?
 - what was the last modified file?
 - How large was the last file?
-- How many files have received in the last `n` minutes, hours, days, or weeks?
+- How many files have received in the last `24` or `48` hours?
 
 It's common for many Data Teams to store and received large amounts of 
 raw files in `s3` buckets. Many times understanding what is happening
 in these `s3` buckets is a critical first "line of defense" and Data Quality
 checks.
+
+
+#### Development
+If you want to develop on this codebase, both Rust and Python and
+in the provided `Dockerfile`.
+
+To build it ... `docker build . --tag=puddles`
+To drop into the image `docker run --volume ./app -it puddles /bin/bash`

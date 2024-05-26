@@ -1,7 +1,19 @@
 [package]
 name = "puddleglum"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
+
+[lib]
+# The name of the native library. This is the name which will be used in Python to import the
+# library (i.e. `import string_sum`). If you change this, you must also change the name of the
+# `#[pymodule]` in `src/lib.rs`.
+name = "puddleglum"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+python-source = "python"
+module-name = "puddlegum.puddlegum"
+#bindings = 'pyo3'
 
 
 [dependencies]
@@ -9,3 +21,4 @@ tokio = { version = "1.33.0", features = ["full"] }
 aws-config = "1.0.3"
 aws-sdk-s3 = "1.11.0"
 chrono = "0.4.31"
+pyo3 = { version = "0.21.2", features = ["extension-module", "experimental-async"] }
