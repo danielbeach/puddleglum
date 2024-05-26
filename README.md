@@ -24,3 +24,16 @@ in the provided `Dockerfile`.
 
 To build it ... `docker build . --tag=puddles`
 To drop into the image `docker run --volume ./app -it puddles /bin/bash`
+
+##### Python
+This project is ported to a Python package called `puddleglum` via `pyo3` and `maturin`
+Use `maturin build` or `maturin develop` to build and/or drop into `venv` using this package.
+`pip install puddleglum`
+
+Usage
+```
+from puddleglum import S3
+
+puddles = S3('some-bucket', 'some-prefix')
+file = puddles.get_most_recent_file()
+```
