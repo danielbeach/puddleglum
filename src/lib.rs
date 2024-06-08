@@ -4,6 +4,7 @@ use aws_sdk_s3::config::Credentials;
 use std::env;
 use aws_sdk_s3::primitives::DateTime;
 use aws_smithy_types_convert::date_time::DateTimeExt;
+use chrono::{Datelike, IsoWeek}; // Add this line to import the Datelike trait
 
 
 
@@ -119,6 +120,23 @@ impl S3 {
         return n_days_ago_files;
     }
 
+    pub async fn get_todays_files(&mut self) -> Vec<S3object> {
+        let mut objects = self.results.clone().unwrap();
+        if self.date_sorted.is_none() {
+            objects = self.quick_sort_s3_objects_by_date(objects);
+        }
+        let mut todays_files: Vec<S3object> = Vec::new();
+        let today = chrono::Utc::now().date();
+        for object in objects {
+            if let Ok(last_modified) = object.last_modified.unwrap().to_chrono_utc() {
+                if last_modified.date() == today {
+                    todays_files.push(object);
+                }
+            }
+        }
+        return todays_files;
+    }
+
     pub async fn get_n_weeks_ago_files(&mut self, n: i64) -> Vec<S3object> {
         let mut objects = self.results.clone().unwrap();
         if self.date_sorted.is_none() {
@@ -134,6 +152,50 @@ impl S3 {
             }
         }
         return n_weeks_ago_files;
+    }
+
+    pub async fn count_files_and_group_by_day_for_n_days(&mut self, n: i64) -> Vec<(chrono::NaiveDate, usize)> {
+        let mut objects = self.results.clone().unwrap();
+        if self.date_sorted.is_none() {
+            objects = self.quick_sort_s3_objects_by_date(objects);
+        }
+        let mut grouped_by_day: Vec<(chrono::NaiveDate, usize)> = Vec::new();
+        let mut current_day = chrono::Utc::now().date();
+        let mut count = 0;
+        for object in objects {
+            if let Ok(last_modified) = object.last_modified.unwrap().to_chrono_utc() {
+                if last_modified.date() == current_day {
+                    count += 1;
+                } else {
+                    grouped_by_day.push((current_day.naive_utc(), count));
+                    count = 1;
+                    current_day = last_modified.date();
+                }
+            }
+        }
+        return grouped_by_day;
+    }
+
+    pub async fn count_files_by_last_n_weeks(&mut self, n: i64) -> Vec<(chrono::IsoWeek, usize)> {
+        let mut objects = self.results.clone().unwrap();
+        if self.date_sorted.is_none() {
+            objects = self.quick_sort_s3_objects_by_date(objects);
+        }
+        let mut grouped_by_week: Vec<(IsoWeek, usize)> = Vec::new();
+        let mut current_week = chrono::Utc::now().date().iso_week();
+        let mut count = 0;
+        for object in objects {
+            if let Ok(last_modified) = object.last_modified.unwrap().to_chrono_utc() {
+                if last_modified.iso_week() == current_week {
+                    count += 1;
+                } else {
+                    grouped_by_week.push((current_week, count));
+                    count = 1;
+                    current_week = last_modified.iso_week();
+                }
+            }
+        }
+        return grouped_by_week;
     }
 
     pub async fn get_size_of_files_in_gb(&self) -> f64 {
@@ -156,6 +218,8 @@ impl S3 {
     }
 
 }
+
+
 
 async fn check_for_creds() -> Credentials {
     let aws_access_key_id = env::var_os("aws_access_key_id").expect("aws env creds not found").into_string();

@@ -31,8 +31,17 @@ async fn main()
     //let size_of_files = s3.get_size_of_files_in_gb().await;
     //println!("Size of files in GB: {}", size_of_files);
 
-    let largest_file = s3.get_largest_file().await;
-    println!("Largest file: {:?}", largest_file);
+    //let largest_file = s3.get_largest_file().await;
+    //println!("Largest file: {:?}", largest_file);
+
+    //let todays_files = s3.get_todays_files().await;
+    //println!("Todays files: {:?}", todays_files);
+
+    //let grouped_by_day = s3.count_files_and_group_by_day_for_n_days(2).await;
+    //println!("Grouped by day: {:?}", grouped_by_day);
+
+    //let grouped_by_week = s3.count_files_by_last_n_weeks(2).await;
+    //println!("Grouped by week: {:?}", grouped_by_week);
 
 }
 
