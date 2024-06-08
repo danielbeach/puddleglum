@@ -1,6 +1,6 @@
 [package]
 name = "puddleglum"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 
 [lib]
@@ -13,7 +13,7 @@ name = "puddleglum"
 features = ["pyo3/extension-module"]
 python-source = "python"
 module-name = "puddlegum.puddlegum"
-#bindings = 'pyo3'
+#bindings = 'pyo3
 
 
 [dependencies]
@@ -22,3 +22,5 @@ aws-config = "1.0.3"
 aws-sdk-s3 = "1.11.0"
 chrono = "0.4.31"
 pyo3 = { version = "0.21.2", features = ["extension-module", "experimental-async"] }
+aws-smithy-types-convert = { version = "0.60.8", features = ["convert-chrono"] }
+

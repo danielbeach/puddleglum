@@ -3,8 +3,10 @@
 <img src="https://github.com/danielbeach/puddleglum/blob/main/imgs/puddleglum.webp" width="450">
 
 
-This is a Rust-based Python package that allows for complex Data Quality 
+This is a `Rust`-based `Python` package that allows for complex Data Quality 
 checks on AWS `s3` buckets. 
+
+`pip install puddleglum`
 
 `PuddleGlum` makes it easy to find out things like ...
 - when was the last time a file was received?
@@ -28,6 +30,9 @@ To drop into the image `docker run --volume ./app -it puddles /bin/bash`
 ##### Python
 This project is ported to a Python package called `puddleglum` via `pyo3` and `maturin`
 Use `maturin build` or `maturin develop` to build and/or drop into `venv` using this package.
+To make a venv do `virtualenv -p python3 .` and then `source bin/activate` And the `maturin` command should
+work from there.
+
 `pip install puddleglum`
 
 Usage
